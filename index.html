@@ -8,6 +8,7 @@
     <link rel="icon" type="image/x-icon" href="logoo.ico">
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
         ::-webkit-scrollbar { width: 0px; background: transparent; }
         body { -ms-overflow-style: none; scrollbar-width: none; }
@@ -91,152 +92,40 @@
             }
         } catch(e) { console.log("Firebase tidak aktif, menggunakan mode lokal."); }
 
-        // 3. DATA NASKAH
-        const naskah = [
-            { nama: "HERU", teks: "Assalamualaikum Warahmatullahi Wabarakatuh. Selamat Malam semuanya, Om Swastiastu, Namo Buddhaya, Syalom, dan Salam Kebajikan untuk kita semua!" },
-            { nama: "HERU", teks: "Halo keluarga besar PPIC TIM PT SOMIC! Apa kabar semua malam hari ini?... baik...luar biasa tentunya dalam keadaan sehat walafiat yah" },
-            { nama: "BIANCA", teks: "Selamat datang di acara Puncak Family Gathering SOMIC tahun 2026 dengan tema From Family to Company!" },
-            { nama: "HERU", teks: "Perkenalkan, saya Heru..." },
-            { nama: "BIANCA", teks: "...dan saya Bianca, yang akan memandu keseruan acara Puncak malam hari ini sampai selesai nanti." },
-            { nama: "HERU", teks: "Senang sekali rasanya bisa melihat senyum ceria dan tawa bahagia dari bapak, ibu, serta adik-adik sekalian yang sudah hadir dan berkumpul bersama kita di sini." },
-            { nama: "BIANCA", teks: "Sebelum kita mulai ke keseruan berikutnya, mari kita buka acara malam ini dengan mengucapkan basmalah bersama-sama." },
-            { nama: "BIANCA & HERU", teks: "Bismillahirrahmanirrahim." },
-            { nama: "HERU", teks: "Nah, sebelum masuk ke acara inti, kita cek semangatnya dulu dong! Kalau saya bilang 'PPIC TEAM', semuanya jawab 'KOMPAK' ya!" },
-            { nama: "BIANCA", teks: "Boleh banget! Ayo kita coba ya, biar makin panas semangatnya malam ini. Siap semuanya?" },
-            { nama: "HERU", teks: "(Arahkan mic ke penonton dengan suara lantang) PPIC TEAM!!!" },
-            { nama: "PESERTA", teks: "(Audiens menjawab serentak) KOMPAK!!!" },
-            { nama: "BIANCA", teks: "Kurang keras nih suaranya! Sekali lagi yang lebih semangat! PPIC TEAM SOMIC!!!" },
-            { nama: "PESERTA", teks: "(Audiens menjawab lebih kencang) KOMPAK!!!" },
-            { nama: "HERU", teks: "Luar biasa, tepuk tangan untuk kita semua!" },
-            { nama: "HERU", teks: "Acara kita malam ini pastinya tidak akan terselenggara tanpa kerja keras dari tim panitia dan juga dukungan penuh dari manajemen. Oleh karena itu, kita akan mendengarkan sambutan terlebih dahulu." },
-            { nama: "BIANCA", teks: "Untuk sambutan yang pertama, kami persilakan kepada pak Ramdan selaku perwakilan manajemen. Waktu dan tempat kami persilakan." },
-            { 
-                nama: "AUDIO", 
-                teks: `
-                <div class="text-center mt-2 relative z-10 pointer-events-auto">
-                    <p class="text-sm text-gray-400 mb-4 tracking-widest">🎶 MUSIK MASUK (BAPAK RAMDAN)</p>
-                    <button onclick="toggleAudio('lagu-ramdan')" class="bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-xl md:text-2xl font-bold py-4 px-10 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.5)] active:scale-95 cursor-pointer">
-                        ▶️ PLAY / ⏹️ STOP AUDIO
-                    </button>
-                </div>`
-            },
-            { nama: "HERU", teks: "Beri tepuk tangan dulu dong buat pak Ramdan!" },
-            { 
-                nama: "KETERANGAN", 
-                teks: "(pak ramdan sambutan)" 
-            },
-            { nama: "BIANCA", teks: "Terima kasih pak Ramdan atas sambutannya." },
-            { nama: "HERU", teks: "Selanjutnya, mari kita dengarkan sambutan dari ketua panitia. untuk menyampaikan sepatah dua patah kata, Kepada Bapak Agus, waktu dan tempat kami persilakan." },
-            { 
-                nama: "AUDIO", 
-                teks: `
-                <div class="text-center mt-2 relative z-10 pointer-events-auto">
-                    <p class="text-sm text-gray-400 mb-4 tracking-widest">🎶 MUSIK MASUK (BAPAK AGUS)</p>
-                    <button onclick="toggleAudio('lagu-agus')" class="bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-xl md:text-2xl font-bold py-4 px-10 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.5)] active:scale-95 cursor-pointer">
-                        ▶️ PLAY / ⏹️ STOP AUDIO
-                    </button>
-                </div>`
-            },
-            { nama: "BIANCA", teks: "Beri tepuk tangan yang paling meriah untuk pak Agus!" },
-            { 
-                nama: "KETERANGAN", 
-                teks: "(pak agus sambutan)" 
-            },
-            { nama: "HERU", teks: "Terima kasih pak Agus atas pesan-pesan hangatnya untuk kita semua malam hari ini." },
-            { nama: "HERU", teks: "Nah, ini dia momen yang paling ditunggu-tunggu! Malam ini kita punya BANYAK SEKALI Doorprize dan Hadiah Hiburan yang siap dibagikan!" },
-            { nama: "BIANCA", teks: "Gimana cara baginya, Heru?" },
-            { nama: "HERU", teks: "Kita akan putar Spinner! Buat 5 orang beruntung pertama yang namanya keluar, siap-siap maju ke depan ya!"},
-            // --- SEGMEN SPINNER & KARAOKE HIBURAN ---
-            { nama: "BIANCA", teks: "Tapi ingat, hadiahnya nggak kita kasih gitu aja! Yang namanya keluar di Spinner wajib KARAOKE di depan!" },
-            { nama: "HERU", teks: "Betul! Boleh nyanyi bareng timnya, atau kalau malu... kita adu suit dulu buat nentuin siapa yang nyanyi!" },
-            { nama: "BIANCA", teks: "Oke, semuanya, siap? Kita putar spinner yang pertama! Tiga... Dua... Satu... Yaaa, selamat kepada pemenang!" },
-            { 
-                nama: "KETERANGAN", 
-                teks: "(MC Memandu keseruan 5 Sesi Spinner, Doorprize, dan Karaoke... Tekan Lanjut setelah semua sesi selesai)" 
-            },
-
-            // --- SEGMEN PEMBUKAAN DOORPRIZE UTAMA & KARAOKE ALL TEAM ---
-            { nama: "BIANCA", teks: "Wah, luar biasa sekali suara-suara emas dari tim PPIC SOMIC malam ini! Semuanya pada totalitas banget!" },
-            { nama: "HERU", teks: "Hadiah hiburan sudah habis dibagikan. Sekarang saatnya kita buka doorprize utamanya bersama-sama!" },
-            { 
-                nama: "KETERANGAN", 
-                teks: "(buka hadiah)" 
-            },
-            { nama: "BIANCA", teks: "mari semuanya kumpul ke depan! Kita nyanyi dan joget bareng di sesi Karaoke All Team!" },
-            { nama: "HERU", teks: "Ayo semuanya, lepaskan penat kerjaan, kita have fun malam ini!" },
-            { 
-                nama: "KETERANGAN", 
-                teks: "(Sesi Karaoke All Team sedang berlangsung... Tekan Lanjut setelah acara nyanyi selesai)" 
-            },
-
-            // --- SEGMEN PEMBAGIAN BUNGA (MOMEN ROMANTIS) ---
-            { nama: "HERU", teks: "(Nada bicara menjadi lebih tenang dan hangat) Bapak, Ibu, dan rekan-rekan sekalian..." },
-            { nama: "HERU", teks: "Sesuai dengan tema kita malam ini, 'From Family to Company'. Kita semua sadar, dedikasi kita di pekerjaan tidak lepas dari doa dan dukungan orang tersayang di rumah." },
-            { nama: "BIANCA", teks: "Oleh karena itu, di momen yang spesial ini, kami mengundang seluruh karyawan untuk sejenak menatap pasangan atau keluarga yang hadir mendampingi malam ini." },
-            { nama: "HERU", teks: "Genggam tangan mereka, berikan pelukan hangat, dan sampaikan rasa terima kasih karena selalu menjadi support system terbaik bagi Anda." },
-            { 
-                nama: "AUDIO", 
-                teks: `
-                <div class="text-center mt-2 relative z-10 pointer-events-auto">
-                    <p class="text-sm text-gray-400 mb-4 tracking-widest">🎶 MUSIK INSTRUMEN ROMANTIS</p>
-                    <button onclick="toggleAudio('lagu-romantis')" class="bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-xl md:text-2xl font-bold py-4 px-10 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.5)] active:scale-95 cursor-pointer">
-                        ▶️ PLAY / ⏹️ STOP AUDIO
-                    </button>
-                    <p class="text-lg text-gray-400 mt-4 italic">"Biarkan peserta saling berpelukan dan menggenggam tangan..."</p>
-                </div>` 
-            },
-            { 
-                nama: "KETERANGAN", 
-                teks: "(Beri jeda sekitar 5 detik saat baca ini mba)" 
-            },
-
-            { nama: "HERU", teks: "(Bicara perlahan dengan latar suara musik) Silakan, tatap mata pasangan Anda. Genggam tangannya, dan ucapkan terima kasih." },
-            { nama: "BIANCA", teks: "(Nada lembut) Terima kasih karena selalu sabar menunggu di rumah. Terima kasih atas doa yang tak pernah putus di setiap langkah keberangkatan kerja..." },
-            { nama: "HERU", teks: "Karena di balik lelahnya pekerjaan, selalu ada senyum mereka yang menjadi alasan kita untuk terus berjuang." },
-            { nama: "BIANCA", teks: "Malam ini, biarkan kebersamaan dan pelukan hangat ini menjadi simbol cinta dan apresiasi yang tak terhingga untuk keluarga tercinta." },
-            // --- TAMBAHAN DIALOG VO SAAT MUSIK BERPUTAR (PART 2) ---
-            { nama: "HERU", teks: " Mungkin sering kali kita lupa mengucapkan terima kasih saat sampai di rumah. Terlalu lelah dengan pekerjaan, hingga kadang lupa ada senyum yang selalu menanti di depan pintu." },
-            { nama: "BIANCA", teks: "Maka dari itu, di malam yang luar biasa ini, jangan ragu untuk mengungkapkan betapa berartinya kehadiran mereka dalam hidup bapak dan ibu sekalian." },
-            { nama: "HERU", teks: "Untuk para suami, peluk erat istri tercinta. Dan untuk para istri, genggam kuat tangan suami Anda. Merekalah pahlawan tanpa tanda jasa di balik kesuksesan PT SOMIC." },
-            { nama: "BIANCA", teks: "(Nada sangat lembut) Karena keluarga adalah alasan kita kembali pulang... dan keluarga pula yang membuat kita mampu melangkah lebih jauh lagi." },
+       // 1. Siapkan tempat kosong untuk naskah
+            let naskah = [];
             
-            // --------------------------------------------------------
-            { 
-                nama: "KETERANGAN", 
-                teks: "(Biarkan musik mengalun selama 1-2 menit agar suasana semakin syahdu. Jangan buru-buru ditekan Lanjut ...ntar balik keatas buat matiin musik nya)" 
-            },
+            // 2. PASTE LINK CSV DARI GOOGLE SHEETS DI SINI:
+            const linkGoogleSheets = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQXmNf9xTDm19Mi9sSYSmV8kMsVypzy0-qKI4i45PIoHJ0KO_5qjiLdEfBSPhONhpaYDtRhPhPYVagQ/pub?output=csv";
 
-            // --- CLOSING & REQUEST MOMENT ---
-            { nama: "BIANCA", teks: "Momen yang sangat manis dan mengharukan. Sekali lagi, beri tepuk tangan yang meriah untuk keluarga besar PPIC PT SOMIC!" },
-            { nama: "HERU", teks: "Acara resmi kita sudah berada di penghujung waktu. Tapi tenang, malam masih panjang!" },
-            { nama: "BIANCA", teks: "Setelah ini adalah waktu bebas atau Request Moment by PIC. Silakan bagi yang mau lanjut nyanyi atau foto-foto, kami persilakan." },
-            { nama: "HERU", teks: "Saya Heru..." },
-            { nama: "BIANCA", teks: "(Nada kaget) eits Tunggu dulu, Heru! Tahan dulu! Sepertinya ada satu agenda rahasia yang kelewatan nih..." },
-            { nama: "HERU", teks: "Loh? Agenda apa tuh Bi? Perasaan di rundown kita udah habis deh acaranya." },
-            { nama: "BIANCA", teks: "Betul, ini memang nggak ada di rundown! Karena malam ini, ada satu sosok yang sangat spesial dan sedang bertambah usianya!" },
-            { nama: "HERU", teks: "(Bersemangat) Wah! Siapa tuh?!" },
-            { nama: "BIANCA", teks: "Kita panggilkan langsung... Bapak Ramdan!! Silakan maju ke depan, Pak!" },
-            { 
-                nama: "AUDIO", 
-                teks: `
-                <div class="text-center mt-2 relative z-10 pointer-events-auto">
-                    <p class="text-sm text-gray-400 mb-4 tracking-widest">🎶 MUSIK ULANG TAHUN (JAMRUD / HAPPY BIRTHDAY)</p>
-                    <button onclick="toggleAudio('lagu-ultah')" class="bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-xl md:text-2xl font-bold py-4 px-10 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.5)] active:scale-95 cursor-pointer">
-                        ▶️ PLAY / ⏹️ STOP AUDIO
-                    </button>
-                    <p class="text-lg text-gray-400 mt-4 italic">"(Istri Pak Ramdan masuk membawa kue ulang tahun)"</p>
-                </div>` 
-            },
-            { 
-                nama: "KETERANGAN", 
-                teks: "(Biarkan momen tiup lilin, potong kue, dan suap-suapan berlangsung meriah... Tekan Lanjut kalau sudah selesai)" 
-            },
-            { nama: "BIANCA", teks: "Sekali lagi, selamat ulang tahun untuk Pak Ramdan! Semoga sehat selalu, panjang umur, dan terus membawa SOMIC menjadi lebih baik!" },
-            { nama: "HERU", teks: "Amin amin ya robal alamin" },
-            { nama: "HERU", teks: "Saya Heru..." },
-            { nama: "BIANCA", teks: "...dan saya Bianca, mewakili seluruh panitia yang bertugas mengucapkan terima kasih banyak atas kebersamaan malam ini." },
-            { nama: "BIANCA & HERU", teks: "Selamat malam, selamat bersenang-senang, dan sampai jumpa di SOMIC Gathering selanjutnya! Wassalamualaikum Warahmatullahi Wabarakatuh!" },
-        ];
+            // 3. Fungsi untuk mengambil dan membaca naskah otomatis
+            function muatNaskahDariSheets() {
+                Papa.parse(linkGoogleSheets, {
+                    download: true,
+                    header: true,
+                    complete: function(results) {
+                        // Memasukkan data dari Excel ke sistem teleprompter
+                        naskah = results.data
+                            .filter(baris => baris.NAMA && baris.TEKS) // Buang baris yang kosong
+                            .map(baris => ({
+                                nama: baris.NAMA.trim(),
+                                teks: baris.TEKS.trim()
+                            }));
+                        
+                        // Menampilkan baris pertama setelah berhasil dimuat
+                        // Pastikan nama fungsinya sesuai dengan yang ada di kode Abang
+                        // (Misalnya renderNaskah(), tampilkanTeks(), atau updateTampilan())
+                        updateTampilan(); 
+                    },
+                    error: function(err) {
+                        console.error("Gagal memuat naskah dari Google Sheets:", err);
+                        alert("Gagal memuat naskah. Pastikan link Google Sheets sudah benar.");
+                    }
+                });
+            }
+
+            // 4. Panggil fungsi muatNaskah saat web pertama kali dibuka
+            muatNaskahDariSheets();
 
         let currentIndex = 0;
         const container = document.getElementById('script-container');
